@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Vector Store and RAG persistence data 
+# (These should be generated on the user's machine per document)
+config/*.pkl
+config/*.npy
+config/*.index
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
